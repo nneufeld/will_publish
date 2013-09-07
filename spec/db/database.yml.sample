@@ -1,0 +1,11 @@
+sqlite3:
+  adapter: sqlite3
+  database: ":memory:"
+
+mysql:
+  adapter: mysql2
+  host: localhost
+  username: root
+  password:
+  database: will_publish
+  charset: utf8
