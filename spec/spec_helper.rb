@@ -1,4 +1,7 @@
+require 'byebug'
+
 require 'active_record'
+require File.expand_path('../../lib/will_publish', __FILE__)
 
 # set adapter to use, default is sqlite3
 # to use an alternative adapter run => rake spec DB='postgresql'
@@ -20,6 +23,10 @@ else
 end
 
 RSpec.configure do |config|
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.filter_run :focus => true
+  config.run_all_when_everything_filtered = true
+
   config.before(:each) do
     clean_database!
   end
@@ -31,5 +38,3 @@ def clean_database!
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
 end
-
-clean_database!

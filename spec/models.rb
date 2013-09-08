@@ -2,6 +2,8 @@ class Guide < ActiveRecord::Base
   has_many :steps
   has_and_belongs_to_many :authors
   has_many :comments, as: :commentable
+
+  will_publish
 end
 
 class Step < ActiveRecord::Base

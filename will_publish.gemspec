@@ -10,9 +10,10 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://github.com/nneufeld'
   s.license     = 'MIT'
 
+  s.add_dependency "activerecord"
+
   s.add_development_dependency "rspec"
   s.add_development_dependency "guard-rspec"
-  s.add_development_dependency "activerecord"
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "mysql2"
 end
