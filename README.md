@@ -20,10 +20,10 @@ end
 
 guide = Guide.create(name: 'How To Write A Rails App', description: 'Learn how to write your first Rails app!')
 guide.publish
-published_version = guide.published # <Guide id: 2, name: 'How To Write A Rails App', description: ...>
-published_version.draft # <Guide id: 1, name: 'How To Write A Rails App', description: ...>
+published_version = guide.published_version # <Guide id: 2, name: 'How To Write A Rails App', description: ...>
+published_version.draft_version # <Guide id: 1, name: 'How To Write A Rails App', description: ...>
 
 guide.update_attributes(name: 'How To Write Your First Rails App')
 guide.publish
-published_version = guide.published # <Guide id: 2, name: 'How To Write Your First Rails App', description: ...>
+published_version = guide.published_version # <Guide id: 2, name: 'How To Write Your First Rails App', description: ...>
 ```
