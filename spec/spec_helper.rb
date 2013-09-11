@@ -33,7 +33,7 @@ RSpec.configure do |config|
 end
 
 def clean_database!
-  models = [Guide, Step, Author, Comment]
+  models = [Guide, Step, Author, Comment, WillPublish::PublishableMapping]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end

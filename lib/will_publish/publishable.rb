@@ -26,18 +26,18 @@ module WillPublish
     module InstanceMethods
 
       def publish
-        published_version = self.published
+        published_version = self.published_version
         published_version ||= self.class.new
         published_version.attributes = attributes_to_copy.merge(is_published_version: true)
         published_version.save!
         WillPublish::PublishableMapping.create(draft: self, published: published_version)
       end
 
-      def published
+      def published_version
         WillPublish::PublishableMapping.where(draft_type: self.class.name, draft_id: self.id).first.try(:published)
       end
 
-      def draft
+      def draft_version
         WillPublish::PublishableMapping.where(published_type: self.class.name, published_id: self.id).first.try(:draft)
       end
 

@@ -15,6 +15,13 @@ describe "WillPublish::Publishable" do
       @published.description.should == @draft.description
     end
 
+    it "should create a PublishableMapping object to map the draft to the published version" do
+      WillPublish::PublishableMapping.count.should == 1
+      mapping = WillPublish::PublishableMapping.first
+      mapping.draft.should == @draft
+      mapping.published.should == @published
+    end
+
     it "should not copy the active record timestamps" do
       @published.created_at.should_not == @draft.created_at
       @published.updated_at.should_not == @draft.updated_at
@@ -52,7 +59,7 @@ describe "WillPublish::Publishable" do
       it "should return the published copy of the publication" do
         @draft.publish
 
-        published = @draft.published
+        published = @draft.published_version
         published.is_published_version.should == true
         published.should == Guide.last
       end
@@ -60,7 +67,7 @@ describe "WillPublish::Publishable" do
 
     context "when called on a draft that has not been published" do
       it "should return nil" do
-        @draft.published.should == nil
+        @draft.published_version.should == nil
       end
     end
 
@@ -68,8 +75,8 @@ describe "WillPublish::Publishable" do
       it "should return nil" do
         @draft.publish
 
-        published = @draft.published
-        published.published.should == nil
+        published = @draft.published_version
+        published.published_version.should == nil
       end
     end
   end
@@ -78,18 +85,18 @@ describe "WillPublish::Publishable" do
     before(:each) do
       @draft = Guide.create(name: 'Test Guide', description: 'Guide description')
       @draft.publish
-      @published = @draft.published
+      @published = @draft.published_version
     end
 
     context "when called on a published version" do
       it "should return the draft version of the publication" do
-        @published.draft.should == @draft
+        @published.draft_version.should == @draft
       end
     end
 
     context "when called on a draft" do
       it "should return nil" do
-        @draft.draft.should == nil
+        @draft.draft_version.should == nil
       end
     end
   end
