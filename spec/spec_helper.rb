@@ -5,7 +5,7 @@ require File.expand_path('../../lib/will_publish', __FILE__)
 
 # set adapter to use, default is sqlite3
 # to use an alternative adapter run => rake spec DB='postgresql'
-db_name = ENV['DB'] || 'sqlite3'
+db_name = (ENV['DB'] || 'sqlite3').to_sym
 database_yml = File.expand_path('../db/database.yml', __FILE__)
 
 if File.exists?(database_yml)
@@ -23,7 +23,6 @@ else
 end
 
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
   config.filter_run :focus => true
   config.run_all_when_everything_filtered = true
 

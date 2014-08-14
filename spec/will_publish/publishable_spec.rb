@@ -10,19 +10,19 @@ describe "WillPublish::Publishable" do
     end
 
     it "should create a new object with the same attributes" do
-      Guide.count.should == 2
-      @published.name.should == @draft.name
-      @published.description.should == @draft.description
+      expect(Guide.count).to eq(2)
+      expect(@published.name).to eq(@draft.name)
+      expect(@published.description).to eq(@draft.description)
     end
 
     it "should not copy the active record timestamps" do
-      @published.created_at.should_not == @draft.created_at
-      @published.updated_at.should_not == @draft.updated_at
+      expect(@published.created_at).not_to eq(@draft.created_at)
+      expect(@published.updated_at).not_to eq(@draft.updated_at)
     end
 
     it "should set the is_published_version flag of the published coopy to true" do
-      @draft.is_published_version.should == false
-      @published.is_published_version.should == true
+      expect(@draft.is_published_version).to eq(false)
+      expect(@published.is_published_version).to eq(true)
     end
 
     context "when the object has already been published" do
@@ -32,12 +32,12 @@ describe "WillPublish::Publishable" do
       end
 
       it "should not create a second published copy" do
-        Guide.count.should == 2
+        expect(Guide.count).to eq(2)
       end
 
       it "should update the attributes of the published copy" do
         @published.reload
-        @published.name.should == 'Updated Name'
+        expect(@published.name).to eq('Updated Name')
       end
     end
 
@@ -53,14 +53,14 @@ describe "WillPublish::Publishable" do
         @draft.publish
 
         published = @draft.published
-        published.is_published_version.should == true
-        published.should == Guide.last
+        expect(published.is_published_version).to eq(true)
+        expect(published).to eq(Guide.last)
       end
     end
 
     context "when called on a draft that has not been published" do
       it "should return nil" do
-        @draft.published.should == nil
+        expect(@draft.published).to be_nil
       end
     end
 
@@ -69,7 +69,7 @@ describe "WillPublish::Publishable" do
         @draft.publish
 
         published = @draft.published
-        published.published.should == nil
+        expect(published.published).to be_nil
       end
     end
   end
@@ -83,13 +83,13 @@ describe "WillPublish::Publishable" do
 
     context "when called on a published version" do
       it "should return the draft version of the publication" do
-        @published.draft.should == @draft
+        expect(@published.draft).to eq(@draft)
       end
     end
 
     context "when called on a draft" do
       it "should return nil" do
-        @draft.draft.should == nil
+        expect(@draft.draft).to be_nil
       end
     end
   end
