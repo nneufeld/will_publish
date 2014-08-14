@@ -20,7 +20,7 @@ describe "WillPublish::Publishable" do
       expect(@published.updated_at).not_to eq(@draft.updated_at)
     end
 
-    it "should set the is_published_version flag of the published coopy to true" do
+    it "should set the is_published_version flag of the published copy to true" do
       expect(@draft.is_published_version).to eq(false)
       expect(@published.is_published_version).to eq(true)
     end
@@ -41,6 +41,41 @@ describe "WillPublish::Publishable" do
       end
     end
 
+    it "should execute the callbacks in the correct order" do
+      expect(@draft.callback_order).to eq(['before', 'around before', 'around after', 'after'])
+    end
+
+    context "when a before_filter returns false" do
+      it "should halt publishing and return false" do
+        @draft.callback_order = []
+        @draft.return_false_before_publish = true
+        @draft.update_attributes(name: 'Updated Name')
+        expect(@draft.publish).to eq(false)
+        @published.reload
+        expect(@published.name).to eq('Test Guide') # published object remained unchanged
+        expect(@draft.callback_order).to eq(['before'])
+      end
+    end
+
+    context "when an after_filter returns false" do
+      it "should return true and successfully complete the publishing" do
+        @draft.return_false_after_publish = true
+        @draft.update_attributes(name: 'Updated Name')
+        expect(@draft.publish).to eq(true)
+        @published.reload
+        expect(@published.name).to eq('Updated Name') # published object remained unchanged
+      end
+    end
+
+    context "when an after_filter raises an exception" do
+      it "should raise an exception and rollback the publish transaction" do
+        @draft.raise_exception_after_publish = true
+        @draft.update_attributes(name: 'Updated Name')
+        expect { @draft.publish }.to raise_error("After pubish error!")
+        @published.reload
+        expect(@published.name).to eq('Test Guide') # published object remained unchanged
+      end
+    end
   end
 
   describe "published" do
