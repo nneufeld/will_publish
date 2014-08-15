@@ -3,6 +3,7 @@ ActiveRecord::Schema.define version: 1 do
     t.string :name
     t.text :description
     t.boolean :is_published_version, default: false
+    t.integer :like_count
 
     t.timestamps
   end
@@ -11,13 +12,13 @@ ActiveRecord::Schema.define version: 1 do
     t.integer :guide_id
     t.string :name
     t.text :description
+    t.integer :like_count
 
     t.timestamps
   end
 
   create_table :authors, force: true do |t|
-    t.string :first_name
-    t.string :last_name
+    t.string :name
 
     t.timestamps
   end

@@ -3,7 +3,10 @@ class Guide < ActiveRecord::Base
   has_and_belongs_to_many :authors
   has_many :comments, as: :commentable
 
-  will_publish
+  will_publish except: {
+    attributes: [:like_count],
+    associations: [:comments, steps: { attributes: [:like_count], associations: [:comments] }]
+  }
 
   # some accessors to help with testing callbacks
   attr_accessor :callback_order

@@ -4,7 +4,12 @@ describe "WillPublish::Publishable" do
 
   describe "publish" do
     before(:each) do
+      Author.create(name: 'DHH')
+      Author.create(name: 'Matz')
       @draft = Guide.create(name: 'Test Guide', description: 'Guide description', created_at: 5.hours.ago, updated_at: 2.hours.ago)
+      @draft.steps << Step.create(name: 'Installation', description: 'Do this...')
+      @draft.steps << Step.create(name: 'Configuration', description: 'Do this...')
+      @draft.authors = Author.all
       @draft.publish
       @published = Guide.last
     end
@@ -13,6 +18,29 @@ describe "WillPublish::Publishable" do
       expect(Guide.count).to eq(2)
       expect(@published.name).to eq(@draft.name)
       expect(@published.description).to eq(@draft.description)
+    end
+
+    it "should create a copy of object's associations" do
+      expect(@published.authors).to eq(Author.all)
+      expect(@published.steps[0].name).to eq('Installation')
+      expect(@published.steps[1].name).to eq('Configuration')
+    end
+
+    it "should not touch associations on the published version that are filtered out by only/except" do
+      comment = @published.comments.create(title: 'Great Guide!', body: 'Very Helpful!')
+      step_comment = @published.steps[1].comments.create(title: 'Did Not Work', body: 'Need Help')
+      @draft.publish
+      @published.reload
+      expect(@published.steps[1].comments.first).to eq(step_comment)
+    end
+
+    it "should not touch attributes on the published version that are filtered out by only/except" do
+      @published.update_attributes(like_count: 5)
+      @published.steps[0].update_attributes(like_count: 2)
+      @draft.publish
+      @published.reload
+      expect(@published.like_count).to eq(5)
+      expect(@published.steps[0].like_count).to eq(2)
     end
 
     it "should not copy the active record timestamps" do
