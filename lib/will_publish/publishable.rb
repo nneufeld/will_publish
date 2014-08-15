@@ -54,13 +54,13 @@ module WillPublish
         begin
           transaction do
             raise PublishCallbackException unless run_callbacks(:publish) do
-              published_version = self.published || self.class.new
-              published_version.attributes = Attributes.attributes_to_copy(self, self.only, self.except).merge(is_published_version: true)
-              published_version.save!
+              published = self.published_version || self.class.new
+              published.attributes = Attributes.attributes_to_copy(self, self.only, self.except).merge(is_published_version: true)
+              published.save!
 
-              Associations.copy_associations(self, published_version, self.only, self.except)
+              Associations.copy_associations(self, published, self.only, self.except)
 
-              PublishableMapping.create!(draft: self, published: published_version) unless published.present?
+              PublishableMapping.create!(draft: self, published: published) unless published_version.present?
               true
             end
           end
@@ -71,11 +71,11 @@ module WillPublish
         return true
       end
 
-      def published
+      def published_version
         PublishableMapping.for_draft(self).try(:published)
       end
 
-      def draft
+      def draft_version
         PublishableMapping.for_published(self).try(:draft)
       end
 

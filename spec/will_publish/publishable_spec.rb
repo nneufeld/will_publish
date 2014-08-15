@@ -43,6 +43,15 @@ describe "WillPublish::Publishable" do
       expect(@published.steps[0].like_count).to eq(2)
     end
 
+    it "should create PublishableMapping objects to map the draft to the published version" do
+      expect(WillPublish::PublishableMapping.count).to eq(3)
+      mapping = WillPublish::PublishableMapping.last
+      expect(mapping.draft).to eq(@draft)
+      expect(mapping.published).to eq(@published)
+      expect(WillPublish::PublishableMapping.all[0].draft).to eq(@draft.steps.first)
+      expect(WillPublish::PublishableMapping.all[0].published).to eq(@published.steps.first)
+    end
+
     it "should not copy the active record timestamps" do
       expect(@published.created_at).not_to eq(@draft.created_at)
       expect(@published.updated_at).not_to eq(@draft.updated_at)
@@ -115,7 +124,7 @@ describe "WillPublish::Publishable" do
       it "should return the published copy of the publication" do
         @draft.publish
 
-        published = @draft.published
+        published = @draft.published_version
         expect(published.is_published_version).to eq(true)
         expect(published).to eq(Guide.last)
       end
@@ -123,7 +132,7 @@ describe "WillPublish::Publishable" do
 
     context "when called on a draft that has not been published" do
       it "should return nil" do
-        expect(@draft.published).to be_nil
+        expect(@draft.published_version).to be_nil
       end
     end
 
@@ -131,8 +140,8 @@ describe "WillPublish::Publishable" do
       it "should return nil" do
         @draft.publish
 
-        published = @draft.published
-        expect(published.published).to be_nil
+        published = @draft.published_version
+        expect(published.published_version).to be_nil
       end
     end
   end
@@ -141,18 +150,18 @@ describe "WillPublish::Publishable" do
     before(:each) do
       @draft = Guide.create(name: 'Test Guide', description: 'Guide description')
       @draft.publish
-      @published = @draft.published
+      @published = @draft.published_version
     end
 
     context "when called on a published version" do
       it "should return the draft version of the publication" do
-        expect(@published.draft).to eq(@draft)
+        expect(@published.draft_version).to eq(@draft)
       end
     end
 
     context "when called on a draft" do
       it "should return nil" do
-        expect(@draft.draft).to be_nil
+        expect(@draft.draft_version).to be_nil
       end
     end
   end
